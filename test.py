@@ -19,8 +19,30 @@ class HtmlExtract(object):
 
 
 	def get_text(self,html):
-		self.lineBlockDistribute([ i for i in self.pre_process(html.encode("utf-8")).split("\n")])
-		
+		text_line = [ i for i in self.pre_process(html.encode("utf-8")).split("\n")]
+		text_distribution =  self.lineBlockDistribute(text_line)
+		text_begin_list = []
+		text_end_list = []
+		text_result_list = []
+		for i in range(len(text_distribution)):
+			if text_distribution[i] > 0:
+				tmp_text = []
+				text_begin_list.append(i)
+				while i < len(text_distribution) and text_distribution[i] > 0:
+					tmp_text.append(text_line[i])
+					i = i + 1
+				text_end_list.append(i)
+				text_result_list.append('\n'.join(tmp_text))
+		_max = 0
+		_index = None
+		for i in range(len(text_result_list)):
+			_size = len(text_result_list[i])
+			if _size > _max:
+				_index = i
+				_max = _size
+		return text_result_list[_index]
+
+
 
 	def lineBlockDistribute(self,lines):
 		indexDistribution = [ len(self.remove_split.sub("",i)) for i in lines]
@@ -57,7 +79,7 @@ class HtmlExtract(object):
 
 h = HtmlExtract()
 html = util.get_url_data("http://finance.people.com.cn/n/2013/0914/c66323-22919783.html",codemode='gbk')
-h.get_text(html)
+print h.get_text(html)
 # for h in h.split("\r"):
 #     print h.encode("utf-8")
 #     print "******************"
