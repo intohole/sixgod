@@ -6,6 +6,7 @@ import urllib
 import json
 import random
 import time
+import re
 
 
 code = {"gbk":"gbk",\
@@ -15,6 +16,7 @@ code = {"gbk":"gbk",\
 
 _jload = json.loads
 _urlencode = urllib.urlencode
+lang_detect = re.compile("<meta(.+?)\charset=[a-zA-Z0-9]+\">",re.IGNORECASE)
 
 
 class UtilException(Exception):
@@ -29,6 +31,9 @@ class UtilException(Exception):
             return "%s,%s" % ( self.msg , self.code)
         else:
             return self.msg
+
+class NoDataReturn(UtilException):
+    pass
 
 
 def get_url_reponse(baseurl , data = None ,header = {}):
@@ -45,13 +50,28 @@ def get_url_reponse(baseurl , data = None ,header = {}):
         _response = urllib2.urlopen(req)
     return _response
 
+def get_html_string(baseurl , data = None ,header = {}):
+    _response = get_url_reponse(baseurl , data ,header)
+    if _response:
+        _html = _response.read()
+        _code = lang_detect.search(_html)
+        _codeing = "gb2312"
+        if _code:
+            _code = _code.group()
+            _codeing = _code.split("charset=")[1].split("\"")[0]
+        if _codeing and _codeing.strip() != "":
+            _html = _html.decode(_codeing,"ignore")
+        return _html
+    raise NoDataReturn,baseurl
+    
+
 
 def _get_url_data(baseurl , data = None ,header = {}, codemode = "gbk"):
     _response = get_url_reponse(baseurl , data ,header)
     if _response:
         if not code.has_key(codemode):
             raise UtilException("NO_RIGHT_DECODE",101)
-        return _response.read().decode(codemode,"in")
+        return _response.read().decode(codemode,"ignore")
     
     
 def get_url_data(url , data = None,codemode = "gbk"):
@@ -69,8 +89,11 @@ def get_url_data(url , data = None,codemode = "gbk"):
 原理：
     
 '''
-def get_url_html_string(base_url ,  query , data = None ,code="utf-8"):
-    url = queryurl(base_url, query)
+def get_url_html_string(base_url ,  query  = None , data = None ,code="utf-8"):
+    if query:
+        url = queryurl(base_url, query)
+    else:
+        url = base_url
     return get_url_data(url,codemode = code , data= data)
 
 
@@ -133,8 +156,7 @@ def getjson(data):
 
 
 if __name__ == "__main__":
-    for _key,_val in jsonstrtodict("""{"ret":1,"start":"58.240.48.0","end":"58.240.159.255","country":"\u4e2d\u56fd","province":"\u6c5f\u82cf","city":"\u5357\u4eac","district":"","isp":"\u8054\u901a","type":"","desc":""}""").items() :
-        print _val
+    print get_html_string('http://news.baidu.com/')
 
 
 
