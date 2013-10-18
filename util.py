@@ -3,19 +3,40 @@
 
 import urllib2
 import urllib
-from HtmlExtractException import HtmlExtractException
 import json
 import random
 import time
+import re
+
 
 code = {"gbk":"gbk",\
-        "utf-8":"utf-8"}
+        "utf-8":"utf-8",
+        "gb2312":"gb2312"}
 
 
 _jload = json.loads
 _urlencode = urllib.urlencode
+lang_detect = re.compile("<meta(.+?)\charset=[a-zA-Z0-9]+\">",re.IGNORECASE)
 
-def _get_url_reponse(baseurl , data = None ,header = {}):
+
+class UtilException(Exception):
+    
+    
+    def __init__(self , msg , code = None):
+        self.msg = msg 
+        self.code = code 
+    
+    def __str__(self):
+        if code:
+            return "%s,%s" % ( self.msg , self.code)
+        else:
+            return self.msg
+
+class NoDataReturn(UtilException):
+    pass
+
+
+def get_url_reponse(baseurl , data = None ,header = {}):
     _response = None
     req = urllib2.Request(baseurl)
     if header and isinstance(header, dict):
@@ -29,9 +50,24 @@ def _get_url_reponse(baseurl , data = None ,header = {}):
         _response = urllib2.urlopen(req)
     return _response
 
+def get_html_string(baseurl , data = None ,header = {}):
+    _response = get_url_reponse(baseurl , data ,header)
+    if _response:
+        _html = _response.read()
+        _code = lang_detect.search(_html)
+        _codeing = "gb2312"
+        if _code:
+            _code = _code.group()
+            _codeing = _code.split("charset=")[1].split("\"")[0]
+        if _codeing and _codeing.strip() != "":
+            _html = _html.decode(_codeing,"ignore")
+        return _html
+    raise NoDataReturn,baseurl
+    
+
 
 def _get_url_data(baseurl , data = None ,header = {}, codemode = "gbk"):
-    _response = _get_url_reponse(baseurl , data ,header)
+    _response = get_url_reponse(baseurl , data ,header)
     if _response:
         if not code.has_key(codemode):
             raise HtmlExtractException("NO_RIGHT_DECODE",101)
@@ -39,6 +75,7 @@ def _get_url_data(baseurl , data = None ,header = {}, codemode = "gbk"):
 
 def get_url_string(url , data = None):
     return  _get_url_reponse(url).read()
+    
     
 def get_url_data(url , data = None,codemode = "gbk"):
     header = {}
@@ -55,8 +92,11 @@ def get_url_data(url , data = None,codemode = "gbk"):
 原理：
     
 '''
-def get_url_info(query , base_url , data = None ,code="utf-8"):
-    url = queryurl(base_url, query)
+def get_url_html_string(base_url ,  query  = None , data = None ,code="utf-8"):
+    if query:
+        url = queryurl(base_url, query)
+    else:
+        url = base_url
     return get_url_data(url,codemode = code , data= data)
 
 
@@ -66,7 +106,7 @@ def jsonstrtodict(jsonstr):
     try:
         datadict = _jload(jsonstr)
     except Exception,e:
-        raise  HtmlExtractException("JSON_DECODE_ERRO_%s" % e , 102)
+        raise  UtilException("JSON_DECODE_ERRO_%s" % e , 102)
     return datadict
 
 def queryurl(baseurl,querydict):
@@ -86,13 +126,13 @@ def randint(n):
         for i in range(n - 1):
             _num *= 10
     else:
-        raise HtmlExtractException("NO_RIGHT_NUM",110)
+        raise UtilException("NO_RIGHT_NUM",110)
     return random.randint(_num,(_num * 10) - 1)
 
 
 def randintbyrang(_min,_max):
     if _min >= _max:
-        raise HtmlExtractException("VALUE_IS_NOT_VALUE",113) 
+        raise UtilException("VALUE_IS_NOT_VALUE",113) 
     return random.randint(_min,_max)
 
 def timems():
@@ -119,7 +159,7 @@ def getjson(data):
 
 
 if __name__ == "__main__":
-    print getjson("jsonp(})")
+    print get_html_string('http://news.baidu.com/')
 
 
 

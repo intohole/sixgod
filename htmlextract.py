@@ -19,7 +19,7 @@ class HtmlExtract(object):
 
 
 	def get_text(self,html):
-		text_line = [ i for i in self.pre_process(html.encode("utf-8")).split("\n")]
+		text_line = [ i for i in self.pre_process(html.decode("utf-8")).split("\n")]
 		text_distribution =  self.lineBlockDistribute(text_line)
 		text_begin_list = []
 		text_end_list = []
