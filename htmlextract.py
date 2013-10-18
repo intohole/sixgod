@@ -78,7 +78,11 @@ class HtmlExtract(object):
 
 
 h = HtmlExtract()
-html = util.get_url_data("http://finance.people.com.cn/n/2013/0914/c66323-22919783.html",codemode='gbk')
+html = util.get_url_string("http://news.xinhuanet.com/world/2013-10/09/c_125497473.htm")
+try:
+	html = html.decode("utf-8")
+except:
+	html = html.decode("gbk")
 print h.get_text(html)
 # for h in h.split("\r"):
 #     print h.encode("utf-8")

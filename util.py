@@ -36,7 +36,9 @@ def _get_url_data(baseurl , data = None ,header = {}, codemode = "gbk"):
         if not code.has_key(codemode):
             raise HtmlExtractException("NO_RIGHT_DECODE",101)
         return _response.read().decode(codemode)
-    
+
+def get_url_string(url , data = None):
+    return  _get_url_reponse(url).read()
     
 def get_url_data(url , data = None,codemode = "gbk"):
     header = {}
