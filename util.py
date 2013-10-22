@@ -16,7 +16,7 @@ code = {"gbk":"gbk",\
 
 _jload = json.loads
 _urlencode = urllib.urlencode
-lang_detect = re.compile("<meta(.+?)\charset=[a-zA-Z0-9]+\">",re.IGNORECASE)
+lang_detect = re.compile("charset=([\w\d-]+)" ,  re.IGNORECASE)
 
 
 class UtilException(Exception):
@@ -33,6 +33,14 @@ class UtilException(Exception):
             return self.msg
 
 class NoDataReturn(UtilException):
+    pass
+
+
+
+class HtmlExtractException(UtilException):
+    pass
+
+class NoResponseException(UtilException):
     pass
 
 
@@ -57,8 +65,9 @@ def get_html_string(baseurl , data = None ,header = {}):
         _code = lang_detect.search(_html)
         _codeing = "gb2312"
         if _code:
-            _code = _code.group()
-            _codeing = _code.split("charset=")[1].split("\"")[0]
+            _codeing = _code.group()
+            _codeing = _codeing[8:]
+#             _codeing = _code.split("charset=")[1].split("\"")[0]
         if _codeing and _codeing.strip() != "":
             _html = _html.decode(_codeing,"ignore")
         return _html
@@ -69,12 +78,12 @@ def get_html_string(baseurl , data = None ,header = {}):
 def _get_url_data(baseurl , data = None ,header = {}, codemode = "gbk"):
     _response = get_url_reponse(baseurl , data ,header)
     if _response:
-        if not code.has_key(codemode):
-            raise HtmlExtractException("NO_RIGHT_DECODE",101)
-        return _response.read().decode(codemode)
+        return _response.read().decode(codemode,'ignore')
+    else:
+        raise NoResponseException,baseurl
 
 def get_url_string(url , data = None):
-    return  _get_url_reponse(url).read()
+    return  get_url_reponse(url).read()
     
     
 def get_url_data(url , data = None,codemode = "gbk"):
@@ -123,7 +132,7 @@ def queryurl(baseurl,querydict):
 def randint(n):
     _num = 1
     if n > 1:
-        for i in range(n - 1):
+        for _ in range(n - 1):
             _num *= 10
     else:
         raise UtilException("NO_RIGHT_NUM",110)
@@ -156,6 +165,15 @@ def getJsonp():
 '''
 def getjson(data):
     return data[data.index("{"):data.rindex("}")+1]
+
+
+def get_html_code(html):
+    _code = lang_detect.search(html)
+    if _code :
+        return _code.group()[8:]
+    else:
+        return ''
+    
 
 
 if __name__ == "__main__":

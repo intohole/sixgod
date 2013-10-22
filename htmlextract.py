@@ -11,7 +11,7 @@ import re
 class HtmlExtract(object):
 	blocksWidth = 3
 	remove_split = re.compile("\s+")
-	pre_reg_list = [re.compile('(?is)<!DOCTYPE.*?>',re.I),re.compile("(?is)<!--.*?-->",re.I),re.compile('(?is)<script.*?>.*?</script>',re.I),re.compile("(?is)<style.*?>.*?</style>",re.I),re.compile("&.{2,5};|&#.{2,5};",re.I),re.compile('<!--.*?>'),re.compile("(?is)<.*?>",re.I)]
+	pre_reg_list = [re.compile('(?is)<!DOCTYPE.*?>',re.IGNORECASE),re.compile('(?is)<a .*?>(.*?)</a>', re.IGNORECASE),re.compile("(?is)<!--.*?-->",re.I),re.compile('(?is)<script.*?>.*?</script>',re.I),re.compile("(?is)<style.*?>.*?</style>",re.I),re.compile("&.{2,5};|&#.{2,5};",re.I),re.compile('<!--.*?>'),re.compile("(?is)<.*?>",re.I)]
 	# remove_enter = re.compile("\\n\\r")
 	def __init__(self):
 		pass
@@ -76,14 +76,7 @@ class HtmlExtract(object):
 
 # python 正则 . 除换行符任意一个字符
 
-
-h = HtmlExtract()
-html = util.get_url_string("http://news.xinhuanet.com/world/2013-10/09/c_125497473.htm")
-try:
-	html = html.decode("utf-8")
-except:
-	html = html.decode("gbk")
-print h.get_text(html)
-# for h in h.split("\r"):
-#     print h.encode("utf-8")
-#     print "******************"
+if __name__ == "__main__":
+	h = HtmlExtract()
+	html = util.get_html_string("http://finance.jfinfo.com/news/20131022/00311378.shtml")
+	print h.get_text(html)
