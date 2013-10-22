@@ -177,7 +177,7 @@ def get_html_code(html):
 
 
 if __name__ == "__main__":
-    print get_html_string('http://news.baidu.com/')
+    print get_html_string('http://world.haiwainet.cn/n/2013/1022/c232591-19831524.html')
 
 
 

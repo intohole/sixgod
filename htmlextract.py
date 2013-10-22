@@ -11,7 +11,8 @@ import re
 class HtmlExtract(object):
 	blocksWidth = 3
 	remove_split = re.compile("\s+")
-	pre_reg_list = [re.compile('(?is)<!DOCTYPE.*?>',re.IGNORECASE),re.compile('(?is)<a .*?>(.*?)</a>', re.IGNORECASE),re.compile("(?is)<!--.*?-->",re.I),re.compile('(?is)<script.*?>.*?</script>',re.I),re.compile("(?is)<style.*?>.*?</style>",re.I),re.compile("&.{2,5};|&#.{2,5};",re.I),re.compile('<!--.*?>'),re.compile("(?is)<.*?>",re.I)]
+	#re.IGNORECASE),re.compile('(?is)<a .*?>(.*?)</a>'
+	pre_reg_list = [re.compile('(?is)<!DOCTYPE.*?>', re.IGNORECASE),re.compile("(?is)<!--.*?-->",re.I),re.compile('(?is)<script.*?>.*?</script>',re.I),re.compile("(?is)<style.*?>.*?</style>",re.I),re.compile("&.{2,5};|&#.{2,5};",re.I),re.compile('<!--.*?>'),re.compile("(?is)<.*?>",re.I)]
 	# remove_enter = re.compile("\\n\\r")
 	def __init__(self):
 		pass
@@ -19,7 +20,8 @@ class HtmlExtract(object):
 
 
 	def get_text(self,html):
-		text_line = [ i for i in self.pre_process(html.decode("utf-8")).split("\n")]
+		text_line = [ i for i in self.pre_process(html).split("\n")]
+# 		print '\n'.join(text_line)
 		text_distribution =  self.lineBlockDistribute(text_line)
 		text_begin_list = []
 		text_end_list = []
@@ -45,7 +47,7 @@ class HtmlExtract(object):
 
 
 	def lineBlockDistribute(self,lines):
-		indexDistribution = [ len(self.remove_split.sub("",i)) for i in lines]
+		indexDistribution = [ len(self.remove_split.sub("",i).strip()) for i in lines]
 		#取出上下两行空行文本
 		for i in range(len(lines)-4):
 			if lines[i] == 0 and lines[i+1] == 0 and lines[i+2] > 0 and lines[i+2] < 40 and lines[i+3] == 0 and lines[i + 4] == 0:
@@ -78,5 +80,5 @@ class HtmlExtract(object):
 
 if __name__ == "__main__":
 	h = HtmlExtract()
-	html = util.get_html_string("http://finance.jfinfo.com/news/20131022/00311378.shtml")
+	html = util.get_html_string("http://world.haiwainet.cn/n/2013/1022/c232591-19831524.html")
 	print h.get_text(html)
