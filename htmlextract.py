@@ -19,7 +19,7 @@ class HtmlExtract(object):
 
 
 	def get_text(self,html):
-		text_line = [ i for i in self.pre_process(html.decode("utf-8")).split("\n")]
+		text_line = [ i for i in self.pre_process(html.encode("utf-8")).split("\n")]
 		text_distribution =  self.lineBlockDistribute(text_line)
 		text_begin_list = []
 		text_end_list = []
@@ -52,7 +52,7 @@ class HtmlExtract(object):
 				lines[i+2] = ""
 				indexDistribution[i+2] = 0
 				i = i+ 1
-				
+
 		for i in range(len(lines)- self.blocksWidth):
 			wordsum = indexDistribution[i]
 			for j in range(i , i + self.blocksWidth):
@@ -66,7 +66,7 @@ class HtmlExtract(object):
 
 
 	def pre_process(self,html):
-		# self.remove_enter.sub("\\r",html) #python do match \n not best ,so i have to replace \r 
+		# self.remove_enter.sub("\\r",html) #python do match \n not best ,so i have to replace \r
 		for reg in self.pre_reg_list:
 			html = reg.sub("",html)
 		return html
