@@ -32,6 +32,9 @@ class UtilException(Exception):
         else:
             return self.msg
 
+class HtmlExtractException(UtilException):
+    pass
+
 class NoDataReturn(UtilException):
     pass
 
@@ -74,7 +77,7 @@ def _get_url_data(baseurl , data = None ,header = {}, codemode = "gbk"):
         return _response.read().decode(codemode)
 
 def get_url_string(url , data = None):
-    return  _get_url_reponse(url).read()
+    return  get_url_reponse(url).read()
     
     
 def get_url_data(url , data = None,codemode = "gbk"):
