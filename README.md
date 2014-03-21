@@ -10,10 +10,9 @@ sixgod pyton 网页正文提取
 
 :::python  
       
-         from htmlextract import HtmlExtract  
-         from util import *  
-
-
+         from vampire.htmlextract import HtmlExtract  
+         from vampire.utils import network  
+         
          h = HtmlExtract()  
-         html = util.get_html_string("http://finance.jfinfo.com/news/20131022/00311378.shtml")  
+         html = network.get_html_string("http://finance.jfinfo.com/news/20131022/00311378.shtml")  
          print h.get_text(html) #返回新闻正文提取

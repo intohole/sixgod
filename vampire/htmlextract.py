@@ -1,8 +1,6 @@
 #-*- coding:utf-8 -*-
 
-import util
 import re
-
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -70,11 +68,4 @@ class HtmlExtract(object):
 			html = reg.sub("",html)
 		return html
 
-
-
-
-if __name__ == "__main__":
-	h = HtmlExtract()
-	html = util.get_html_string("http://finance.jfinfo.com/news/20131022/00311378.shtml")
-	print h.get_text(html)
 
