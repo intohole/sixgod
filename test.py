@@ -7,13 +7,13 @@
 
 from vampire.htmlextract import HtmlExtract
 from vampire.utils import network
-
+import requests
 
 
 if __name__== '__main__':
-	html = network.get_html_string('http://i.ifeng.com/news/sharenews.f?aid=80121810')
+	html = requests.get('http://i.ifeng.com/news/sharenews.f?aid=80121810')
 	ex = HtmlExtract()
-	print ex.get_text(html)
+	print ex.get_text(html.text)
 
 
 
