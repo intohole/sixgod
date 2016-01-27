@@ -2,9 +2,8 @@
 
 import re
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
+__ALL__ = ["HtmlExtract"]
 
 class HtmlExtract(object):
 
@@ -13,10 +12,25 @@ class HtmlExtract(object):
     blocksWidth = 3
     remove_split = re.compile("\s+")
     pre_reg_list = [re.compile('(?is)<!DOCTYPE.*?>',re.IGNORECASE),re.compile('(?is)<a .*?>(.*?)</a>', re.IGNORECASE),re.compile("(?is)<!--.*?-->",re.I),re.compile('(?is)<script.*?>.*?</script>',re.I),re.compile("(?is)<style.*?>.*?</style>",re.I),re.compile("&.{2,5};|&#.{2,5};",re.I),re.compile('<!--.*?>'),re.compile("(?is)<.*?>",re.I)]
-    # remove_enter = re.compile("\\n\\r")
     
 
     def get_text(self,html):
+        """提取网页正文算法
+            params 
+                html                    网页代码
+            return 
+                value                   网页正文
+            raise 
+                None 
+            >>> import urllib2
+            >>> import sys
+            >>> reload(sys)
+            >>> sys.setdefaultencoding("utf-8")
+            >>> html = urllib2.urlopen("http://www.china.com.cn/guoqing/2016-01/27/content_37677113.htm").read()
+            >>> extractor = HtmlExtract()
+            >>> len(extractor.get_text(html)) != 0
+            >>> print extractor.get_text(html)
+        """
         text_line = [ i for i in self.pre_process(html.encode("utf-8")).split("\n")]
         text_distribution =  self.lineBlockDistribute(text_line)
         text_begin_list = []
@@ -64,7 +78,6 @@ class HtmlExtract(object):
 
 
     def pre_process(self,html):
-        # self.remove_enter.sub("\\r",html) #python do match \n not best ,so i have to replace \r
         for reg in self.pre_reg_list:
             html = reg.sub("",html)
         return html
