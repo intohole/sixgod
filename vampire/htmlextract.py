@@ -3,7 +3,22 @@
 import re
 import sys
 
-__ALL__ = ["HtmlExtract"]
+__ALL__ = ["HtmlExtract" , "HtmlExtractException"]
+
+class HtmlExtractException(Exception):
+    
+    
+    def __init__(self,msg,code=None):
+        Exception.__init__(self)
+        self.msg = msg
+        self.code = code
+    
+    
+    def __str__(self):
+        if self.code:
+            return "%s,%s" % (self.msg , self.code)
+        return self.msg
+ 
 
 class HtmlExtract(object):
 
@@ -81,5 +96,3 @@ class HtmlExtract(object):
         for reg in self.pre_reg_list:
             html = reg.sub("",html)
         return html
-
-
