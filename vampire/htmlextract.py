@@ -6,19 +6,16 @@ import sys
 __ALL__ = ["HtmlExtract" , "HtmlExtractException"]
 
 class HtmlExtractException(Exception):
-    
-    
+
     def __init__(self,msg,code=None):
         Exception.__init__(self)
         self.msg = msg
         self.code = code
-    
-    
+
     def __str__(self):
         if self.code:
             return "%s,%s" % (self.msg , self.code)
         return self.msg
- 
 
 class HtmlExtract(object):
 
@@ -27,16 +24,15 @@ class HtmlExtract(object):
     blocksWidth = 3
     remove_split = re.compile("\s+")
     pre_reg_list = [re.compile('(?is)<!DOCTYPE.*?>',re.IGNORECASE),re.compile('(?is)<a .*?>(.*?)</a>', re.IGNORECASE),re.compile("(?is)<!--.*?-->",re.I),re.compile('(?is)<script.*?>.*?</script>',re.I),re.compile("(?is)<style.*?>.*?</style>",re.I),re.compile("&.{2,5};|&#.{2,5};",re.I),re.compile('<!--.*?>'),re.compile("(?is)<.*?>",re.I)]
-    
 
     def get_text(self,html):
         """提取网页正文算法
-            params 
+            params
                 html                    网页代码
-            return 
+            return
                 value                   网页正文
-            raise 
-                None 
+            raise
+                None
             >>> import urllib2
             >>> import sys
             >>> reload(sys)
