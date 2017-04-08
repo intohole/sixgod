@@ -6,12 +6,12 @@
 
 
 from vampire.htmlextract import HtmlExtract
-from vampire.utils import network
 import requests
 
 
 if __name__== '__main__':
-	html = requests.get('http://i.ifeng.com/news/sharenews.f?aid=80121810')
+	html = requests.get('http://www.fabao365.com/fangchan/167193/')
+        html.encoding="utf-8"
 	ex = HtmlExtract()
 	print ex.get_text(html.text)
 
